@@ -1,0 +1,8 @@
+%h3
+  Tagged with:
+  
+%ul{class: "list-group"}
+  - @tags.each do |tag|
+    %li{class: "list-group-item"}
+      = link_to tag.name, articles_path(tag: tag.name)
+      

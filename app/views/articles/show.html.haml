@@ -1,0 +1,19 @@
+%p#notice= notice
+
+
+%p
+  %b Name:
+  = @article.name
+%p
+  %b URL:
+  = @article.url
+%p
+  %b Description:
+  = @article.description
+%p
+  %b Tags:
+  = @article.tag_list
+
+= link_to 'Edit', edit_article_path(@article)
+\|
+= link_to 'Index', articles_path

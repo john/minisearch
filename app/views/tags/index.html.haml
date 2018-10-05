@@ -1,0 +1,26 @@
+.row
+  .col-sm-12
+    %h1
+      Tags
+      = link_to 'New Tag', new_tag_path, class: "btn btn-primary btn-sm", style: "margin-left: 20px;"
+    
+    %table
+      %thead
+        %tr
+          %th
+          %th
+
+      %tbody
+        - @tags.each do |tag|
+          %tr
+            %td
+              = link_to sanitize("<span class='oi oi-pencil' title='edit' aria-hidden='true'></span>"), edit_tag_path(tag), style: "color: grey;"
+            
+              &nbsp;
+            
+              = link_to sanitize("<span class='oi oi-trash' title='delete' aria-hidden='true'></span>"), tag, method: :delete, data: { confirm: 'Are you sure?' }, style: "color: grey;"
+            
+            %td
+              &nbsp; &#183; &nbsp;
+              
+              = link_to tag.name, tag

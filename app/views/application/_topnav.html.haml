@@ -1,0 +1,43 @@
+%nav.navbar.navbar-expand-md.navbar-dark.bg-dark{style: "margin-bottom: 25px;"}
+  %a.navbar-brand{:href => "/"} Content Tagger
+  
+  %button.navbar-toggler{"aria-controls" => "navbarsExample04", "aria-expanded" => "false", "aria-label" => "Toggle navigation", "data-target" => "#navbarsExample04", "data-toggle" => "collapse", :type => "button"}
+    %span.navbar-toggler-icon
+    
+  #navbarsExample04.collapse.navbar-collapse
+    %ul.navbar-nav.mr-auto
+      - if user_signed_in?
+        %li.nav-item
+          %a.nav-link
+            Hi #{current_user.name}
+        %li.nav-item
+          = link_to "Articles", "/", class: "nav-link"
+        %li.nav-item
+          = link_to "Tags", tags_path, class: "nav-link"
+        %li.nav-item
+          = link_to 'Sign out', destroy_user_session_path, method: :delete, class: "nav-link"
+      - else
+        %li.nav-item
+          = link_to 'Sign up', new_user_registration_path, class: "nav-link"
+        %li.nav-item
+          %a.nav-link{href: '/foo'} Log in
+          
+    /   %li.nav-item.active
+    /     %a.nav-link{:href => "#"}
+    /       Home
+    /       %span.sr-only (current)
+    /   %li.nav-item
+    /     %a.nav-link{:href => "#"} Link
+    /   %li.nav-item
+    /     %a.nav-link.disabled{:href => "#"} Disabled%
+    /   %li.nav-item.dropdown
+    /     %a#dropdown04.nav-link.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", :href => "https://example.com"} Dropdown
+    /     .dropdown-menu{"aria-labelledby" => "dropdown04"}
+    /       %a.dropdown-item{:href => "#"} Action
+    /       %a.dropdown-item{:href => "#"} Another action
+    /       %a.dropdown-item{:href => "#"} Something else here
+          
+    %form.form-inline.my-2.my-md-0{method: 'get', action: '/articles'}
+      %input.form-control{:placeholder => "Search", type: "text", name: "q", value: params[:q]}
+      - if params[:q]
+        = link_to "clear", root_path, class: "btn btn-light", style: "margin-left: 10px;"
