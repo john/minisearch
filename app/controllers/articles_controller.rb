@@ -10,6 +10,8 @@ class ArticlesController < ApplicationController
       @articles = Article.where("name LIKE ? OR description LIKE ? OR url LIKE ?", "%#{q}%", "%#{q}%", "%#{q}%")
     elsif params[:tag]
       @articles = Article.tagged_with( params[:tag] )
+      @active_tags = params[:tag].split(',')
+      logger.debug "active tags: #{@active_tags.inspect}"
     else
       @articles = Article.all
     end

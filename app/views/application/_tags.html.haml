@@ -1,8 +1,25 @@
 %h3
-  Tagged with:
+  Tags
+  -# = link_to 'clear', '/', class: "btn btn-outline-secondary btn-sm", style: "margin-left: 10px;"
   
-%ul{class: "list-group"}
+.list-group
   - @tags.each do |tag|
-    %li{class: "list-group-item"}
-      = link_to tag.name, articles_path(tag: tag.name)
+    - classes = "list-group-item list-group-item-action"
+    - tags = []
+    
+    - classes += " active" if @active_tags&.include?(tag.name)
+    
+    
+    - tags << tag.name unless @active_tags&.include?(tag.name)
+    
+    - if @active_tags.present?
+      - @active_tags.each do |t|
+        - unless t == tag.name
+          - tags << t
+        
+
+    - if tags.empty?
+      = link_to tag.name, articles_path, class: classes
+    - else
+      = link_to tag.name, articles_path(tag: tags.join(',')), class: classes
       
