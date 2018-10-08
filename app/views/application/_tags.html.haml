@@ -1,23 +1,21 @@
+:css
+  .list-group-item { padding: 7px; font-size: 0.8em; }
+
 %h3
   Tags
-  -# = link_to 'clear', '/', class: "btn btn-outline-secondary btn-sm", style: "margin-left: 10px;"
   
 .list-group
-  - @tags.each do |tag|
+  - @tags.order("lower(name)").each do |tag|
     - classes = "list-group-item list-group-item-action"
     - tags = []
     
     - classes += " active" if @active_tags&.include?(tag.name)
-    
-    
     - tags << tag.name unless @active_tags&.include?(tag.name)
     
     - if @active_tags.present?
       - @active_tags.each do |t|
         - unless t == tag.name
           - tags << t
-        
-
     - if tags.empty?
       = link_to tag.name, articles_path, class: classes
     - else

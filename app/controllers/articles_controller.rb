@@ -8,6 +8,10 @@ class ArticlesController < ApplicationController
     if params[:q]
       q = params[:q]
       @articles = Article.where("name LIKE ? OR description LIKE ? OR url LIKE ?", "%#{q}%", "%#{q}%", "%#{q}%")
+      
+      # tagged articles too
+      @articles += Article.tagged_with(q)
+      
     elsif params[:tag]
       @articles = Article.tagged_with( params[:tag] )
       @active_tags = params[:tag].split(',')
@@ -35,7 +39,11 @@ class ArticlesController < ApplicationController
   # POST /articles.json
   def create
     @article = Article.new(article_params)
-
+    flattened_tag_list = params[:article][:tag_list]&.map { |s| "#{s}" if s.present? }&.join(',')
+    logger.debug "flattened_tag_list: #{flattened_tag_list}"
+    @article.tag_list = flattened_tag_list
+    logger.debug "@article.tag_list2: " + @article.tag_list.inspect
+    
     respond_to do |format|
       if @article.save
         format.html { redirect_to @article, notice: 'Article was successfully created.' }

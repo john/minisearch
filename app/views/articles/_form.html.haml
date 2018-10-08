@@ -26,7 +26,9 @@
       Tag list
       %small.text-muted
         comma separated
-    = f.text_field :tag_list, value: f.object.tag_list.to_s, class: "form-control"
+        -#= f.text_field :tag_list, value: f.object.tag_list.to_s, class: "form-control"
+    
+        = f.select :tag_list, Tag.order(:name).map{|t| [t.name, t.name]},{ :prompt => "Please select"}, { :multiple => true, :size => 5 }
     
   .actions
     = f.submit 'Save', class: "btn btn-primary"

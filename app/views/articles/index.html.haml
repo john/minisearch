@@ -1,26 +1,26 @@
+:css
+  .articles { padding: 8px; font-size: 14px;}
+  .articles a { color: grey; font-size: 0.75em; padding-left: 20px;}
+  .title { margin-left: 20px; }
+  .delete { color: grey; font-size: 0.75em; }
+
 .row
-  .col-sm-9
+  .col-sm-10
     %h1
       Articles
       = link_to 'New Article', new_article_path, class: "btn btn-primary btn-sm", style: "margin-left: 20px;"
 
-    %table
-      %thead
-        %tr
-          %th 
-          %th
-
+    %table.table-hover.table-bordered
       %tbody
         - @articles.each do |article|
           %tr
-            %td
-              = link_to sanitize("<span class='oi oi-pencil' title='edit' aria-hidden='true'></span>"), edit_article_path(article), style: "color: grey;"
-              &nbsp;
-              = link_to sanitize("<span class='oi oi-trash' title='delete' aria-hidden='true'></span>"), article, method: :delete, data: { confirm: 'Are you sure?' }, style: "color: grey;"
-            %td{style: "padding-right: 100px;"}
-              &nbsp; &#183; &nbsp;
+            %td.articles
+              = link_to sanitize("<span class='oi oi-pencil' title='edit' aria-hidden='true'></span>"), edit_article_path(article)
               
-              = link_to article.name, article
+              = link_to sanitize("<span class='oi oi-trash' title='delete' aria-hidden='true'></span>"), article, method: :delete, data: { confirm: 'Are you sure?' }
               
-  .col-sm-3
+              %span.title
+                = link_to article.name, article
+              
+  .col-sm-2
     = render partial: 'tags'
