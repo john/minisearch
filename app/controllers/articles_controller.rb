@@ -1,23 +1,57 @@
+# From: https://mkdev.me/en/posts/how-to-use-query-objects-to-refactor-rails-sql-queries
+class FindArticles
+  attr_accessor :initial_scope
+
+  def initialize(initial_scope)
+    @initial_scope = initial_scope
+  end 
+  
+  def call(params)
+    scoped = search(initial_scope, params[:q])
+    scoped = filter_by_tags(scoped, params[:tag])
+    scoped = filter_by_article_type(scoped, params[:article_type])
+    scoped
+  end
+
+  private def search(scoped, q = nil)
+    if q
+      scoped = scoped.find_by_sql("SELECT DISTINCT \"articles\".* FROM \"articles\" INNER JOIN \"taggings\" \"article_taggings_9124a5b\" ON \"article_taggings_9124a5b\".\"taggable_id\" = \"articles\".\"id\" AND \"article_taggings_9124a5b\".\"taggable_type\" = 'Article' AND \"article_taggings_9124a5b\".\"tag_id\" IN (SELECT \"tags\".\"id\" FROM \"tags\" WHERE LOWER(\"tags\".\"name\") ILIKE '#{q}' ESCAPE '!') OR (name LIKE '%#{q}%' OR description LIKE '%fintech%' OR url LIKE '%#{q}%')")
+    else
+      scoped
+    end
+  end
+  
+  private def filter_by_tags(scoped, tags = nil)
+     if tags.present?
+       scoped.tagged_with( tags )
+     else
+       scoped
+     end
+   end
+   
+   private def filter_by_article_type(scoped, article_type = nil)
+      if article_type && article_type.present?
+        scoped.where( 'article_type = ?', Article.article_types[article_type.to_sym])
+      else
+        scoped
+      end
+    end
+end
+
 class ArticlesController < ApplicationController
   before_action :set_article, only: [:show, :edit, :update, :destroy]
 
   # GET /articles
   # GET /articles.json
   def index
-    @tags = ActsAsTaggableOn::Tag.all
-    if params[:q]
-      q = params[:q]
-      @articles = Article.where("name LIKE ? OR description LIKE ? OR url LIKE ?", "%#{q}%", "%#{q}%", "%#{q}%")
-      
-      # tagged articles too
-      @articles += Article.tagged_with(q)
-      
-    elsif params[:tag]
-      @articles = Article.tagged_with( params[:tag] )
+    @articles = FindArticles.new(Article.all).call(params)
+    
+    # Get all tags ordered by name
+    @tags = ActsAsTaggableOn::Tag.order(Arel.sql("lower(name)"))
+    
+    # put all tags in the URL into an instance var, so they can be used to distinguish which tags are being used in the UI
+    if params[:tag].present?
       @active_tags = params[:tag].split(',')
-      logger.debug "active tags: #{@active_tags.inspect}"
-    else
-      @articles = Article.all
     end
   end
 
@@ -40,9 +74,7 @@ class ArticlesController < ApplicationController
   def create
     @article = Article.new(article_params)
     flattened_tag_list = params[:article][:tag_list]&.map { |s| "#{s}" if s.present? }&.join(',')
-    logger.debug "flattened_tag_list: #{flattened_tag_list}"
     @article.tag_list = flattened_tag_list
-    logger.debug "@article.tag_list2: " + @article.tag_list.inspect
     
     respond_to do |format|
       if @article.save
@@ -87,6 +119,6 @@ class ArticlesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def article_params
-      params.require(:article).permit(:created_by, :name, :url, :description, :tag_list)
+      params.require(:article).permit(:created_by, :name, :url, :description, :article_type, :tag_list)
     end
 end

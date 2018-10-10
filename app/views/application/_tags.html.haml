@@ -4,20 +4,31 @@
 %h3
   Tags
   
+- querystring = {}
+- querystring[:article_type] = params[:article_type]
+
 .list-group
-  - @tags.order("lower(name)").each do |tag|
+  - @tags.each do |tag|
+  
     - classes = "list-group-item list-group-item-action"
     - tags = []
     
     - classes += " active" if @active_tags&.include?(tag.name)
+    
+    -# put the current tag into being looped over into the , unless it's no longer an active tag (ie, it was unclicked)
     - tags << tag.name unless @active_tags&.include?(tag.name)
     
+    -# go through all the active tags
     - if @active_tags.present?
       - @active_tags.each do |t|
+        
+        -# unless the active tag being looped over (t) is the same as the tag in the outer loop (tag.name), add it to the tags array
         - unless t == tag.name
           - tags << t
+    
+    - querystring['tag'] = tags.join(',')
     - if tags.empty?
-      = link_to tag.name, articles_path, class: classes
+      = link_to tag.name, articles_path(querystring), class: classes
     - else
-      = link_to tag.name, articles_path(tag: tags.join(',')), class: classes
+      = link_to tag.name, articles_path(querystring), class: classes
       

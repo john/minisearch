@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(version: 2018_10_04_214815) do
     t.integer "created_by"
     t.string "name"
     t.string "url"
+    t.integer "article_type"
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

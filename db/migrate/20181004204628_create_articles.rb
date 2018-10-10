@@ -4,6 +4,7 @@ class CreateArticles < ActiveRecord::Migration[5.2]
       t.integer :created_by
       t.string :name
       t.string :url
+      t.integer :article_type
       t.text :description
 
       t.timestamps

@@ -5,7 +5,7 @@
   .delete { color: grey; font-size: 0.75em; }
 
 .row
-  .col-sm-10
+  .col-sm-8
     %h1
       Articles
       = link_to 'New Article', new_article_path, class: "btn btn-primary btn-sm", style: "margin-left: 20px;"
@@ -21,6 +21,18 @@
               
               %span.title
                 = link_to article.name, article
+  .col-sm-2
+    %h2
+      Filter
+    %div
+      %form{method: :get}
+        
+        - if params[:tag]
+          = hidden_field_tag :tag, params[:tag]
+        
+        - selected = params[:article_type] if params[:article_type]
+        = select_tag :article_type, options_for_select( enum_collection_from_class('Article', :article_type), selected), {:prompt => "- by type -", onchange: "this.form.submit();"}
+        
               
   .col-sm-2
     = render partial: 'tags'
