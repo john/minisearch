@@ -6,6 +6,11 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
+Tag.create(name: 'article')
+Tag.create(name: 'podcast')
+Tag.create(name: 'video')
+Tag.create(name: 'cast_study')
+
 Tag.create(name: "Adtech")
 Tag.create(name: "Agtech")
 Tag.create(name: "AI/ML")

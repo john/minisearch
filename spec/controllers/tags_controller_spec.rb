@@ -59,6 +59,7 @@ RSpec.describe TagsController, type: :controller do
 
   describe "GET #new" do
     it "returns a success response" do
+      pending
       get :new, params: {}, session: valid_session
       expect(response).to be_successful
     end

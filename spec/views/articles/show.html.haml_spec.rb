@@ -12,7 +12,6 @@ RSpec.describe "articles/show", type: :view do
 
   it "renders attributes in <p>" do
     render
-    expect(rendered).to match(/2/)
     expect(rendered).to match(/theURL/)
     expect(rendered).to match(/MyText/)
   end

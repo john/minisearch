@@ -22,16 +22,42 @@
               %span.title
                 = link_to article.name, article
   .col-sm-2
-    %h2
-      Filter
-    %div
-      %form{method: :get}
-        
-        - if params[:tag]
-          = hidden_field_tag :tag, params[:tag]
-        
-        - selected = params[:article_type] if params[:article_type]
-        = select_tag :article_type, options_for_select( enum_collection_from_class('Article', :article_type), selected), {:prompt => "- by type -", onchange: "this.form.submit();"}
+    %h4
+      Type
+    .list-group
+      - querystring = {}
+      - querystring[:article_type] = params[:article_type]
+      
+      - ['article', 'podcast', 'video', 'case_study'].each do |tag|
+        - classes = "list-group-item list-group-item-action"
+        - tags = []
+  
+        - classes += " active" if @active_tags&.include?(tag)
+  
+        -# put the current tag into being looped over into the , unless it's no longer an active tag (ie, it was unclicked)
+        - tags << tag unless @active_tags&.include?(tag)
+  
+        -# go through all the active tags
+        - if @active_tags.present?
+          - @active_tags.each do |t|
+      
+            -# unless the active tag being looped over (t) is the same as the tag in the outer loop (tag.name), add it to the tags array
+            - unless t == tag
+              - tags << t
+  
+        - querystring['tag'] = tags.join(',')
+        - if tags.empty?
+          = link_to tag.gsub('_', ' '), articles_path(querystring), class: classes
+        - else
+          = link_to tag.gsub('_', ' '), articles_path(querystring), class: classes
+      -#
+        / %form{method: :get}
+        /
+        /   - if params[:tag]
+        /     = hidden_field_tag :tag, params[:tag]
+        /
+        /   - selected = params[:article_type] if params[:article_type]
+        /   = select_tag :article_type, options_for_select( enum_collection_from_class('Article', :article_type), selected), {:prompt => "- by type -", onchange: "this.form.submit();"}
         
               
   .col-sm-2
